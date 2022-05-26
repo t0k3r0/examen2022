@@ -1,0 +1,43 @@
+OPERADORES DE COMPARACIÓN
+
+1. Nombre oficial de los países que tienen un área menor que 50km2.
+db.countries.find({area:{$lt:50}},{"_id":0,"name.official":1}).pretty();
+
+2. Nombre oficial de los países que tienen un área mayor o igual que 5000000km2.
+db.countries.find({area:{$gte:5000000}},{"_id":0,"name.official":1}).pretty();
+
+3. Nombre oficial de los países que tienen un área menor que 50 o mayor que 5000000km2.
+db.countries.find({$or:[{area:{$lt:50}},{area:{$gte:5000000}}]},{"_id":0,"name.official":1}).pretty();
+
+4. Área menor que 50 e independiente
+db.countries.find({area:{$lt:50}, independent: true},{"_id":0,"name.official":1}).pretty();
+//No necesario operador AND porque es el que se usa por defecto
+
+ARRAYS 
+5. Nombre oficial de los países que solamente tienen frontera con España
+db.countries.find({"borders":["ESP"]},{"_id":0, "name.official":1}).pretty();
+
+6. Nombre oficial de los países que tienen como frontera Francia.
+db.countries.find({"borders":"FRA"},{"_id":0, "name.official":1}).pretty();
+db.countries.find({"borders":{$in: ["FRA"]}},{"_id":0, "name.official":1}).pretty();
+
+7. Nombre oficial de los países que tienen como frontera Francia Y Bélgica. FRA, BEL
+db.countries.find({$and: [{borders:"BEL"},{borders:"FRA"}]},{"_id":0, "name.official":1}).pretty(); 
+//Necesario AND si buscamos valores con 2 condiciones sobre el mismo campo. 
+
+8. Nombre oficial de los países que tienen como frontera Francia o España
+db.countries.find({$or: [{borders:"FRA"},{borders:"ESP"}]},{"_id":0, "name.official":1}).pretty();
+db.countries.find({"borders":{$in: ["FRA","ESP"]}},{"_id":0, "name.official":1}).pretty();
+
+9. Nombre oficial de los países que tienen 10 fronteras
+db.countries.find({"borders":{$size:10}},{"_id":0, "name.official":1}).pretty();
+
+
+REGEX
+10. Nombre común de los países cuyo nombre oficial comienza por "Republic"
+
+db.countries.find({"name.official":{$regex: /Republic/}},{"_id":0, "name.common":1}).pretty();
+
+11. Nombre común de los países cuyo nombre oficial y nombre común comienzan por Republic
+
+db.countries.find({"name.official":{$regex: /Republic/},"name.common":{$regex: /Republic/}},{"_id":0, "name.common":1}).pretty();

@@ -1,0 +1,182 @@
+﻿1. Escribe una consulta que muestre todos los documentos de la colección restaurants.
+db.restaurants.find();
+
+2. Escribe una consulta que muestre los campos restaurant_id, name, borough y cuisine.
+db.restaurants.find({},{"restaurant_id" : 1,"name":1,"borough":1,"cuisine" :1});
+
+3. Repite la consulta pero esta vez que excluya el campo _id.
+db.restaurants.find({},{"restaurant_id" : 1,"name":1,"borough":1,"cuisine" :1,"_id":0});
+
+4. Escribe una consulta que muestre los campos restaurant_id, name, borough y zip code pero que excluya el campo _id.
+db.restaurants.find({},{"restaurant_id" : 1,"name":1,"borough":1,"address.zipcode" :1,"_id":0});
+
+5. Escribe una consulta que muestre todos los restaurantes del barrio (borough) de Bronx. Otra que los cuente
+db.restaurants.find({"borough": "Bronx"}); es igual que db.restaurants.find({"borough": {$eq: "Bronx"}});
+db.restaurants.find({"borough": "Bronx"}).count();
+
+6. Escribe una consulta que muestre los primeros 5 restaurantes del barrio de Bronx y muestralo de forma indentada con pretty()
+db.restaurants.find({"borough": "Bronx"}).limit(5).pretty();
+
+7. Escribe una consulta que muestre los siguientes 5 restaurantes del barrio de Bronx después de saltar los 5 primeros.
+db.restaurants.find({"borough": "Bronx"}).skip(5).limit(5);
+
+8. Escribe una consulta que muestre los restaurantes que han recibido una puntuación (score) superior a 90.
+db.restaurants.find({"grades.score":{$gt : 90}});
+
+9. Escribe una consulta que muestre los restaurantes que han recibido una puntuación entre 80 y 100.
+db.restaurants.find({grades : { $elemMatch:{"score":{$gt : 80 , $lt :100}}}});
+
+10. Escribe una consulta que muestre los restaurantes ubicados en una latitud menor que 40.764345
+db.restaurants.find({"address.coord.1" : {$lt : 40.764345}});
+
+11. Escribe una consulta que muestre los restaurantes que no preparan cocina de tipo "American ", tiene una puntuación de más de 70 puntos y una latitud menor que 40.764345
+db.restaurants.find(
+               {$and:
+                    [
+                       {"cuisine" : {$ne :"American "}},
+                       {"grades.score" : {$gt : 70}},
+                       {"address.coord.1" : {$lt : 40.764345}}
+                    ]
+                }
+                    );
+					
+db.restaurants.find({ cuisine: { $ne: "American " }, "address.coord.1": { $lt: 40.764345 }, "grades.score": { $gt: 70 } });
+ 					
+12. Escribe una consulta que muestre los restaurantes que no preparan cocina de tipo "American ", tiene una puntuación de más de 70 puntos y una longitud mayor que -73.972992
+db.restaurants.find(
+                           {
+                             "cuisine" : {$ne : "American "},
+                             "grades.score" :{$gt: 70},
+                             "address.coord.0" : {$gt : -73.972992}
+                            }
+                     );
+
+
+13. Escribe una consulta que muestre los restaurantes de tipo de cocina "Turkish" que han obtenido un grado "A" y no pertenecen al barrio de Brooklyn. El documento debe mostrarse en orden descendente por nombre. 
+db.restaurants.find( {
+                             "cuisine" : "Turkish",
+                             "grades.grade" :"A",
+                             "borough": {$ne : "Brooklyn"}
+                       } 
+                    ).sort({"name":-1});
+
+14. Escribe una consulta que muestre el restaurant_id, name, borough y cuisine de los restaurantes cuyo nombre comienza por "Wil"
+db.restaurants.find(
+					{"name": {$regex: /^Wil/}},
+					{"_id": 0, "restaurant_id": 1, "name": 1, "borough": 1, "cuisine": 1}
+					);
+					
+15. Escribe una consulta que muestre el restaurant_id, name, borough y cuisine de los restaurantes cuyo nombre termine por 'ces'
+db.restaurants.find(
+					{"name": {$regex: /ces$/}},
+					{"_id": 0, "restaurant_id": 1, "name": 1, "borough": 1, "cuisine": 1}
+					);
+
+16. Escribe una consulta que muestre el resturant_id, name, borough y cuisine de los restaurantes en cuyo nombre se encuentre la cadena 'Reg'
+db.restaurants.find(
+					{"name": {$regex: /Reg/}},
+					{"_id": 0, "restaurant_id": 1, "name": 1, "borough": 1, "cuisine": 1}
+					);
+					
+17. Escribe una consulta que muestre los restaurantes del barrio de Bronx y que preparen cocina Japanese o Chinese
+db.restaurants.find(
+					{ "borough": "Bronx", $or : [{ "cuisine" : "Japanese" },{ "cuisine" : "Chinese" }]}
+					);
+					
+db.restaurants.find({"borough":"Bronx","cuisine":{$in:["Japanese","Chinese"]}});
+					
+18. Escribe una consulta que muestre el restaurant_id, name, borough y cuisine de los restaurantes de Staten Island o Queens o Bronx o Brooklyn
+db.restaurants.find(
+					{"borough" :{$in :["Staten Island","Queens","Bronx","Brooklyn"]}},
+					{"_id": 0, "restaurant_id" : 1, "name":1, "borough":1, "cuisine" :1}
+					);
+					
+19. Escribe una consulta que muestre el restaurant_id, name, borough y cuisine de los restaurantes que no pertenecen a Staten Island o Queens o Bronx o Brooklyn
+db.restaurants.find(
+					{"borough" :{$nin :["Staten Island","Queens","Bronx","Brooklyn"]}},
+					{"_id": 0, "restaurant_id" : 1, "name":1, "borough":1, "cuisine" :1}
+					);
+
+db.restaurants.find(
+			{ $nor: [ {borough: "Staten Island"}, {borough: "Queens"}, {borough: "Bronx"}, {borough: "Brooklyn"}]}, 
+			{"_id": 0, "restaurant_id":1, "name":1, "borough":1, "cuisine":1});
+
+20. Escribe una consulta que muestre el restaurant_id, name, borough y cuisine de los restaurantes que han obtenido al menos una puntuacion menor o igual a 10.
+db.restaurants.find({ 'grades.score': { $lte: 10 } },{"_id": 0, "restaurant_id":1, "name":1, "borough":1, "cuisine":1});
+
+Para ver los restaurantes que han obtenido en todas la puntuaciones  menor o igual a 10:
+
+db.restaurants.find({"grades.score" :{ $not: {$gt : 10}}},{"_id": 0, "restaurant_id":1, "name":1, "borough":1, "cuisine":1});
+
+21. Escribe una consulta que muestre el restaurant_id, name, borough y cuisine de los restaurantes que preparan cocina que no es "American" o "Pizza" y cuyo nombre comienza por 'Wil'
+db.restaurants.find(
+					{$and: [
+							{"name": {$regex: /^Wil/}}, {$and: [
+														{"cuisine" : {$ne :"American "}}, 
+														{"cuisine" : {$ne :"Pizza"}}
+														]}
+					]},
+					{"_id": 0, "restaurant_id":1, "name":1, "borough":1, "cuisine":1}
+					);
+			
+
+db.restaurants.find(
+					{$and: [
+					{"name": {$regex: /^Wil/}}, {"cuisine" : {$nin: ["American ", "Pizza"]}}]}, 
+					{"_id": 0, "restaurant_id":1, "name":1, "borough":1, "cuisine":1}
+					);
+					
+
+22. Escribe una consulta que muestre el restaurant_id, name y grados  de los restaurantes que han obtenido un grado 'A' y puntuación de 11 el ISODate "2014-08-11T00:00:00Z" 
+db.restaurants.find( 
+                {"grades":{
+						$elemMatch: {"date": ISODate("2014-08-11T00:00:00Z"), 
+									"grade":"A" , 
+									"score" : 11}}}, 
+                {"_id": 0, "restaurant_id" : 1, "name":1, "grades":1}
+             );
+
+23. Escribe una consulta que muestre el restaurant_id, name y grados  de los restaurantes cuyo segundo elemento en el array de grados contiene un grado 'A' y puntuación de 9 el ISODate "2014-08-11T00:00:00Z" 
+db.restaurants.find( 
+                      { "grades.1.date": ISODate("2014-08-11T00:00:00Z"), 
+                        "grades.1.grade":"A" , 
+                        "grades.1.score" : 9
+                      }, 
+                       {"_id": 0, "restaurant_id" : 1, "name":1, "grades":1}
+                   );
+
+
+24. Escribe una consulta que muestre el restaurant_id, name, address y geographical location de los restaurantes cuyo segundo elemento en el array de coordenadas contiene un valor entre 40.78 y 40.79 (ambos incluidos).
+db.restaurants.find( 
+                      { 
+                        "address.coord.1": {$gte : 40.78, $lte : 40.79}
+                      },
+                        {"_id": 0, "restaurant_id" : 1, "name":1, "address":1, "coord":1}
+                   );
+
+25. Escribe una consulta que muestre los nombres de los restaurantes ordenados de forma ascendente junto con todas sus columnas. 
+db.restaurants.find().sort({"name":1});
+
+26. Escribe una consulta que muestre los nombres de los restaurantes ordenados de forma descendente junto con todas sus columnas.
+db.restaurants.find().sort({"name":-1});
+						  
+27. Escribe una consulta que muestre el nombre de la cuisine de forma ascendente y para esa misma cuisine el borough en forma descendente.
+db.restaurants.find().sort(
+                           {"cuisine":1,"borough" : -1,}
+                          );
+
+28. Escribe una consulta para sabes si todas la direcciones contienen calle (street) o no.
+db.restaurants.find(
+                     {"address.street" : { $exists : true } } 
+                   );
+
+29. Escribe una consulta que seleccione todos los documentos cuyo valor de coordenada es double.
+db.restaurants.find(
+                    {"address.coord" : {$type : "double"}}
+                   );
+
+30. Escribe una consulta que muestre el restaurant id, name y grades para los restaurantes que tienen un score múltiplo de 7.
+db.restaurants.find(
+                      {"grades.score" :{$mod : [7,0]}},
+                      {"_id": 0, "restaurant_id" : 1,"name":1,"grades":1}
+                    );

@@ -1,0 +1,25 @@
+﻿1. Inserta un nuevo vuelo con los siguientes datos utilizando insertOne()
+
+use aeropuertos
+
+db.vuelos.insertOne({"departureAirport": "MUC", "arrivalAirport": "SFO", "aircraft":"Airbus A380", "distante": 12000,  "intercontinental":"true"});
+
+
+2. Inserta dos vuelos más con insertMany(). En esta ocasión añadiremos en un array el tipo de menú del vuelo.
+
+db.vuelos.insertMany([{"departureAirport": "LHR","arrivalAirport": "TXL","aircraft": "Airbus A320","distance": 950,"intercontinental": false,"menu":["regular", "vegan", "gluten-free"]},{"departureAirport": "BIO","arrivalAirport": "BCN","aircraft": "Boeing 737","distance": 600,"intercontinental": false,"menu": ["vegan"]}]);
+   
+3. Actualiza el vuelo insertado en primer lugar para añadirle el campo menu con el valor "regular"
+
+db.vuelos.updateOne({_id: ObjectId("5e7b3b996d1d161db480bb3e")}, {$set: {menu:["regular"]}});
+
+4. Elimina de la BD los vuelos que tengan menu "vegan"
+
+db.vuelos.deleteMany({menu: "vegan"});			   
+				
+
+
+  
+  
+   
+   

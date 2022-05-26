@@ -1,0 +1,16 @@
+1. Hoteles de Getaria
+db.hotelesEuskadi.find({"properties.municipality": "Getaria"}).pretty()
+
+2. Hoteles que se encuentran en un radio de 1 km desde tu vivienda habitual. Primero definimos un index.  
+db.hotelesEuskadi.createIndex({geometry: "2dsphere"})
+db.hotelesEuskadi.find({geometry:{$near: {$geometry: {type: "Point", coordinates:[ -2.677589, 42.836072]},$maxDistance:1000}}}).pretty()
+
+3. Muestra los hoteles que se encuentran dentro de un área específica. Primero debemos definir un polígono. (Parte vieja Donostia)
+const p1 = [-1.986685,43.321789]
+const p2 = [-1.988199,43.323761]
+const p3 = [-1.983081,43.325553]
+const p4 = [-1.980821,43.323299]
+db.hotelesEuskadi.find({geometry:{$geoWithin:{$geometry:{type:"Polygon",coordinates:[[p1,p2,p3,p4,p1]]}}}})
+
+4. Encuentra los hoteles en 5kms a la redonda de San Juan de Gaztelugatxe. Parecido a $near pero no los ordena por proximidad. 
+db.hotelesEuskadi.find({geometry:{$geoWithin: {$centerSphere: [[-2.7854775,43.4468996], 5/6378.1]}}}).pretty()
